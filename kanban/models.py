@@ -10,7 +10,7 @@ class Board(models.Model):
 
 
 class Column(models.Model):
-    board = models.ForeignKey('Board', related_name='columns')
+    board = models.ForeignKey('Board', related_name='columns', on_delete=models.CASCADE)
     title = models.CharField(max_length=255)
 
     class Meta:
@@ -21,7 +21,7 @@ class Column(models.Model):
 
 
 class Card(models.Model):
-    column = models.ForeignKey('Column', related_name='cards')
+    column = models.ForeignKey('Column', related_name='cards', on_delete=models.CASCADE)
     title = models.CharField(max_length=255)
     slug = models.SlugField(allow_unicode=True)
 
