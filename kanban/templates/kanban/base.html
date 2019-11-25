@@ -5,7 +5,7 @@
  <meta http-equiv="x-ua-compatible" content="ie=edge">
  <meta name="description" content="">
  <meta name="viewport" content="width=device-width, initial-scale=1.0">
- <title>djello</title>
+ <title>AE Stocks</title>
  <script src="//bensmithett.github.io/dragster/lib/dragster.js"></script>
  <style>
  .no-display {
@@ -21,6 +21,7 @@
  }
  .board {
   display: flex;
+  width :3000px
  }
  .column {
   color: #4d4d4d;
@@ -29,6 +30,7 @@
   border-radius: 3px;
   padding: 10px;
   margin-right: 10px;
+  height : 100%;
  }
  .column > h3 {
   margin: 0 0 10px 0;
@@ -43,6 +45,7 @@
  .card {
   color: inherit;
   text-decoration: inherit;
+  font-size : 12px;
  }
  .new-card {
   border: none;
@@ -60,6 +63,18 @@
   cursor: pointer;
   width: 100%;
  }
+ .show-new-list {
+  width : 270px;
+  height : 30px;
+  border-radius : 3px;
+  /* display: block; */
+  text-align: left;
+  cursor: pointer;
+  font-size : 14px;
+  color: #534f4f;
+  background-color: rgb(109, 164, 196);
+  border :rgb(109, 164, 196);
+ }
  .show-new-card:hover {
   color: #4d4d4d;
   background-color: #cdd2d4;
@@ -67,7 +82,7 @@
  }
  .moving-card {
   cursor: -webkit-grabbing;
-  transform: rotate(1deg);
+  transform: rotate(10deg);
  }
  .column.dropme {
   background-color: #a9a9a9;
@@ -77,18 +92,27 @@
 <body>
  {% block content %}{% endblock %}
 
- <h1>Djello</h1>
+ <h1>아프리카 코끼리</h1>
 
- {% for board in boards %}
+ {% for board in boards %} 
  <h2>{{ board.name }}</h2>
- <div class="board">
 
+ <!-- Top30 메인 리스트 / 별도 db 사용 / 수정 불가 -->
+ <div class="board">
+    <div class="column">
+        <h3>Top 30</h3>
+        {% for card in tops %}
+        <a class="card" draggable="true" data-card-title="{{ card.title }}">{{ card.title }} {{ card.rate }} {{ card.market }} </a>
+        {% endfor %}
+    </div>
+ 
+ <!-- 종목 정리용 리스트 / 생성, 삭제 가능 / 리스트는 메인리스트에서 가져옴 -->
   {% for column in board.columns.all %}
   <div class="column" data-column-id="{{ column.id }}">
    <h3>{{ column.title }}</h3>
 
    {% for card in column.cards.all %}
-   <a class="card" draggable="true" data-card-id="{{ card.id }}" href="/cards/{{ card.id }}/{{ card.slug }}/">{{ card.title }}</a>
+   <a class="card" draggable="true" data-card-title="{{ card.title }}" href="/cards/{{ card.id }}/{{ card.slug }}/">{{ card.title }}</a>
    {% endfor %}
 
    <form action="/new-card/" method="POST">
@@ -99,7 +123,14 @@
    <button class="show-new-card" data-column-id="{{ column.id }}">Add a card…</button>
   </div>
   {% endfor %}
+  <form action="/new-list/" method="POST">
+    {% csrf_token %}
+    <input type="hidden" name="board_id" value="{{ board.id }}" />
+    <input type="text" name="title" class="new-list no-display" data-board-id="{{ board.id }}" />
+   </form>
+   <button class="show-new-list" data-board-id="{{ board.id }}">+ Add a new list…</button>
  </div>
+ 
  {% empty %}
  <p><em>No boards created yet!</em></p>
  {% endfor %}
@@ -128,9 +159,18 @@
    });
   }
 
+  for (button of document.getElementsByClassName('show-new-list')) {
+   button.addEventListener('click', e => {
+    const newCard = document.querySelector('.new-list[data-board-id="' + e.currentTarget.dataset.boardId + '"]');
+    newCard.classList.remove('no-display');
+    e.currentTarget.classList.add('no-display');
+    newCard.focus();
+   });
+  }
+
   for (card of document.getElementsByClassName('card')) {
    card.addEventListener('dragstart', e => {
-    e.dataTransfer.setData('Text', e.currentTarget.dataset.cardId);
+    e.dataTransfer.setData('Text', e.currentTarget.dataset.cardTitle); 
    });
   }
 
@@ -149,7 +189,7 @@
     e.currentTarget.classList.remove('dropme')
     const postData = JSON.stringify({
      'column_id': e.currentTarget.dataset.columnId,
-     'card_id': e.dataTransfer.getData('Text'),
+     'card_title': e.dataTransfer.getData('Text'),
     });
 
     fetch('/drop/', {
