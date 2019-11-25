@@ -1,3 +1,4 @@
+{% load static %}
 <!doctype html>
 <html lang="en">
 <head>
@@ -7,88 +8,9 @@
  <meta name="viewport" content="width=device-width, initial-scale=1.0">
  <title>AE Stocks</title>
  <script src="//bensmithett.github.io/dragster/lib/dragster.js"></script>
- <style>
- .no-display {
-  display: none !important;
- }
- button {
-  cursor: pointer;
- }
- body {
-  font-family: 'helvetica neue', sans-serif;
-  color: white;
-  background-color: rgb(0, 121, 191);
- }
- .board {
-  display: flex;
-  width :3000px
- }
- .column {
-  color: #4d4d4d;
-  width: 270px;
-  background-color: #E2E4E6;
-  border-radius: 3px;
-  padding: 10px;
-  margin-right: 10px;
-  height : 100%;
- }
- .column > h3 {
-  margin: 0 0 10px 0;
- }
- .card, .new-card {
-  display: block;
-  background-color: white;
-  border-radius: 3px;
-  padding: 8px;
-  margin-bottom: 8px;
- }
- .card {
-  color: inherit;
-  text-decoration: inherit;
-  font-size : 12px;
- }
- .new-card {
-  border: none;
-  resize: none;
-  width: 100%;
-  box-sizing: border-box;
- }
- .show-new-card {
-  color: #8c8c8c;
-  font-size: 14px;
-  background: none;
-  border: none;
-  display: block;
-  text-align: left;
-  cursor: pointer;
-  width: 100%;
- }
- .show-new-list {
-  width : 270px;
-  height : 30px;
-  border-radius : 3px;
-  /* display: block; */
-  text-align: left;
-  cursor: pointer;
-  font-size : 14px;
-  color: #534f4f;
-  background-color: rgb(109, 164, 196);
-  border :rgb(109, 164, 196);
- }
- .show-new-card:hover {
-  color: #4d4d4d;
-  background-color: #cdd2d4;
-  text-decoration: underline;
- }
- .moving-card {
-  cursor: -webkit-grabbing;
-  transform: rotate(10deg);
- }
- .column.dropme {
-  background-color: #a9a9a9;
- }
- </style>
+ <link rel="stylesheet" href="{% static 'css/kanban.css' %}">
 </head>
+
 <body>
  {% block content %}{% endblock %}
 
@@ -109,7 +31,12 @@
  <!-- 종목 정리용 리스트 / 생성, 삭제 가능 / 리스트는 메인리스트에서 가져옴 -->
   {% for column in board.columns.all %}
   <div class="column" data-column-id="{{ column.id }}">
-   <h3>{{ column.title }}</h3>
+   <form action="/new-col-name/" method="POST">
+    {% csrf_token %}
+    <input type="hidden" name="column_id" value="{{ column.id }}" />
+    <input type="text" name="title" class="new-col-name no-display" data-column-id="{{ column.id }}" />
+   </form>
+   <button class="column-title" data-column-id="{{ column.id }}">{{ column.title }}</button>
 
    {% for card in column.cards.all %}
    <a class="card" draggable="true" data-card-title="{{ card.title }}" href="/cards/{{ card.id }}/{{ card.slug }}/">{{ card.title }}</a>
@@ -120,7 +47,7 @@
     <input type="hidden" name="column_id" value="{{ column.id }}" />
     <input type="text" name="title" class="new-card no-display" data-column-id="{{ column.id }}" />
    </form>
-   <button class="show-new-card" data-column-id="{{ column.id }}">Add a card…</button>
+   <button class="show-new-card" data-column-id="{{ column.id }}">+ Add a card</button>
   </div>
   {% endfor %}
   <form action="/new-list/" method="POST">
@@ -128,7 +55,7 @@
     <input type="hidden" name="board_id" value="{{ board.id }}" />
     <input type="text" name="title" class="new-list no-display" data-board-id="{{ board.id }}" />
    </form>
-   <button class="show-new-list" data-board-id="{{ board.id }}">+ Add a new list…</button>
+   <button class="show-new-list" data-board-id="{{ board.id }}">+ Add a new list</button>
  </div>
  
  {% empty %}
@@ -156,15 +83,24 @@
     newCard.classList.remove('no-display');
     e.currentTarget.classList.add('no-display');
     newCard.focus();
-   });
+   })
   }
 
   for (button of document.getElementsByClassName('show-new-list')) {
    button.addEventListener('click', e => {
-    const newCard = document.querySelector('.new-list[data-board-id="' + e.currentTarget.dataset.boardId + '"]');
-    newCard.classList.remove('no-display');
+    const newList = document.querySelector('.new-list[data-board-id="' + e.currentTarget.dataset.boardId + '"]');
+    newList.classList.remove('no-display');
     e.currentTarget.classList.add('no-display');
-    newCard.focus();
+    newList.focus();
+   });
+  }
+
+  for (button of document.getElementsByClassName('column-title')) {
+   button.addEventListener('click', e => {
+    const newList = document.querySelector('.new-col-name[data-column-id="' + e.currentTarget.dataset.columnId + '"]');
+    newList.classList.remove('no-display');
+    e.currentTarget.classList.add('no-display');
+    newList.focus();
    });
   }
 

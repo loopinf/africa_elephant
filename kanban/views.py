@@ -33,6 +33,8 @@ def index(request):
 def new_card(request):
     column_id = int(request.POST.get('column_id'))
     title = request.POST.get('title')
+    if title == '':
+        return redirect('/')
     assert title and column_id
     Card.objects.create(title=title, column_id=column_id)
     return redirect('/')
@@ -40,14 +42,26 @@ def new_card(request):
 def new_list(request):
     board_id = int(request.POST.get('board_id'))
     title = request.POST.get('title')
+    if title == '':
+        return redirect('/')
     assert title and board_id
     Column.objects.create(title=title, board_id=board_id)
+    return redirect('/')
+
+def new_col_name(request):
+    column_id = int(request.POST.get('column_id'))
+    title = request.POST.get('title')
+    if title == '':
+        return redirect('/')
+    assert title and column_id
+    Column.objects.filter(id=column_id).update(title=title)
     return redirect('/')
 
 
 def view_card(request, card_id, card_slug):
     return render(request, template_name='kanban/view.html', context={
         'boards': Board.objects.all(),
+        'tops' : Card_top30.objects.all(),
         'current_card': Card.objects.get(id=card_id),
     })
 
