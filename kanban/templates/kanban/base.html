@@ -31,13 +31,24 @@
  <!-- 종목 정리용 리스트 / 생성, 삭제 가능 / 리스트는 메인리스트에서 가져옴 -->
   {% for column in board.columns.all %}
   <div class="column" data-column-id="{{ column.id }}">
+    <div class="c-title" style="float:left">
    <form action="/new-col-name/" method="POST">
     {% csrf_token %}
     <input type="hidden" name="column_id" value="{{ column.id }}" />
     <input type="text" name="title" class="new-col-name no-display" data-column-id="{{ column.id }}" />
    </form>
    <button class="column-title" data-column-id="{{ column.id }}">{{ column.title }}</button>
+    </div>
 
+   <!-- 컬럼 삭제 버튼  -->
+   <div class="c-delete" sytle="float:right">
+   <form action="/delete-column/" method="POST" >
+    {% csrf_token %}
+    <input type="hidden" name="column_id" value="{{ column.id }}" />
+    <button class="delete-button" type='submit' >delete</button>
+   </form>
+   </div>
+   
    {% for card in column.cards.all %}
    <a class="card" draggable="true" data-card-title="{{ card.title }}" href="/cards/{{ card.id }}/{{ card.slug }}/">{{ card.title }}</a>
    {% endfor %}
@@ -92,6 +103,7 @@
     newCard.focus();
    })
   }
+
 
   for (button of document.getElementsByClassName('show-new-list')) {
    button.addEventListener('click', e => {

@@ -57,8 +57,16 @@ def new_col_name(request):
     Column.objects.filter(id=column_id).update(title=title)
     return redirect('/')
 
+def delete_column(request):
+    column_id = int(request.POST.get('column_id'))
+    print(column_id)
+    assert column_id
+    Column.objects.filter(id=column_id).delete()
+    return redirect('/')
+
 
 def view_card(request, card_id, card_slug):
+    
     return render(request, template_name='kanban/view.html', context={
         'boards': Board.objects.all(),
         'tops' : Card_top30.objects.all(),
