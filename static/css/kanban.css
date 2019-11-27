@@ -34,13 +34,14 @@
     font-weight : bold;
    }
    .new-col-name {
-    display: block;
+    /* display: block; */
     background-color: white;
     border-radius: 3px;
-    padding: 8px;
-    margin-bottom: 8px;
+    /* padding: 8px; */
+    margin : 0 0 10px 0;
     font-size : 15px;
     font-weight : bold;
+    height : 20px;
   
    }
    .card, .new-card {

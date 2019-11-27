@@ -77,11 +77,18 @@
   }
   const cookies = parse_cookies();
 
+  for (doc of document.getElementsByClassName('board')) {
+    doc.addEventListener('keyup', e => {
+      if (e.keyCode === 27) { window.location = '/'
+      }
+    })
+  }
+
   for (button of document.getElementsByClassName('show-new-card')) {
    button.addEventListener('click', e => {
     const newCard = document.querySelector('.new-card[data-column-id="' + e.currentTarget.dataset.columnId + '"]');
     newCard.classList.remove('no-display');
-    e.currentTarget.classList.add('no-display');
+    // e.currentTarget.classList.add('no-display');
     newCard.focus();
    })
   }
@@ -97,10 +104,10 @@
 
   for (button of document.getElementsByClassName('column-title')) {
    button.addEventListener('click', e => {
-    const newList = document.querySelector('.new-col-name[data-column-id="' + e.currentTarget.dataset.columnId + '"]');
-    newList.classList.remove('no-display');
+    const newColName = document.querySelector('.new-col-name[data-column-id="' + e.currentTarget.dataset.columnId + '"]');
+    newColName.classList.remove('no-display');
     e.currentTarget.classList.add('no-display');
-    newList.focus();
+    newColName.focus();
    });
   }
 
