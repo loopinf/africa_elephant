@@ -46,7 +46,7 @@
         <form action="/delete-column/" method="POST" >
           {% csrf_token %}
           <input type="hidden" name="column_id" value="{{ column.id }}" />
-          <button class="delete-button" type='submit' >delete</button>
+          <button class="delete-button" type='submit'>delete</button>
         </form>
       </div>
    
@@ -57,16 +57,16 @@
         <form action="/new-card/" method="POST">
           {% csrf_token %}
           <input type="hidden" name="column_id" value="{{ column.id }}" />
-          <input type="text" name="title" class="new-card no-display" data-column-id="{{ column.id }}" />
+          <input id ="new-card-text" type="text" name="title" class="new-card no-display" data-column-id="{{ column.id }}" />
         </form>
         <button id="add-card-button" class="show-new-card" data-column-id="{{ column.id }}">+ Add a card</button>
       </div>
       {% endfor %}
-
+    <!-- 새 컬럼 추가 버튼 -->
     <form action="/new-list/" method="POST">
       {% csrf_token %}
       <input type="hidden" name="board_id" value="{{ board.id }}" />
-      <input type="text" name="title" class="new-list no-display" data-board-id="{{ board.id }}" />
+      <input id="add-list-text" type="text" name="title" class="new-list no-display" data-board-id="{{ board.id }}" />
     </form>
     <button id="add-list-button" class="show-new-list" data-board-id="{{ board.id }}">+ Add a new list</button>
   </div>
@@ -90,49 +90,77 @@
    return cookies;
   }
   const cookies = parse_cookies();
-  
-  // 'ESC'버튼 눌렀을때 원래 페이지로 돌아가기
-  for (doc of document.getElementsByClassName('board')) {
-    doc.addEventListener('keyup', e => {
-      if (e.keyCode === 27) { window.location = '/'
-      }
-    })
-  }
-  
-
+   
+  // 새 카드 만드는 버튼 액션 정의
   for (button of document.getElementsByClassName('show-new-card')) {
     button.addEventListener('click', e => {
       const newCard = document.querySelector('.new-card[data-column-id="' + e.currentTarget.dataset.columnId + '"]');
       newCard.classList.remove('no-display');
       newCard.focus();
-   })
+
+      document.onclick = function(a) {
+        if(a.target.id !== 'c-title-text' && a.target.id !== 'c-title-button' && a.target.id !== 'add-card-button' && a.target.id !== 'add-list-button') {
+          newCard.classList.add('no-display');
+        };  
+      };
+
+      document.onkeydown = function(e) {
+      if(e.keyCode === 27){
+        newCard.classList.add('no-display');
+        // showMe.classList.remove('no-display');
+        };
+      };
+    });
   }
 
-
+  // 새 리스트 만드는 버튼 액션 정의 
   for (button of document.getElementsByClassName('show-new-list')) {
    button.addEventListener('click', e => {
     const newList = document.querySelector('.new-list[data-board-id="' + e.currentTarget.dataset.boardId + '"]');
+    const showMe = e.currentTarget;
     newList.classList.remove('no-display');
     e.currentTarget.classList.add('no-display');
     newList.focus();
+
+    document.onclick = function(e) {
+      if(e.target.id !== 'c-title-text' && e.target.id !== 'c-title-button' && e.target.id !== 'add-card-button' && e.target.id !== 'add-list-button'){
+        newList.classList.add('no-display');
+        showMe.classList.remove('no-display');
+      };
+    };
+
+    document.onkeydown = function(e) {
+      if(e.keyCode === 27){
+        newList.classList.add('no-display');
+        showMe.classList.remove('no-display');
+      };
+    };
    });
   }
 
+  // 리스트 이름 클릭에 관련된 액션
   for (button of document.getElementsByClassName('column-title')) {
    button.addEventListener('click', e => {
     const newColName = document.querySelector('.new-col-name[data-column-id="' + e.currentTarget.dataset.columnId + '"]');
+    const showMe = e.currentTarget;
     newColName.classList.remove('no-display');
     e.currentTarget.classList.add('no-display');
-    newColName.focus();        
+    newColName.focus();
+
+    document.onclick = function(e) {
+      if(e.target.id !== 'c-title-text' && e.target.id !== 'c-title-button' && e.target.id !== 'add-card-button' && e.target.id !== 'add-list-button'){
+        newColName.classList.add('no-display');
+        showMe.classList.remove('no-display');
+      };
+    };
+
+    document.onkeydown = function(e) {
+      if(e.keyCode === 27){
+        newColName.classList.add('no-display');
+        showMe.classList.remove('no-display');
+       };
+      };
     });
-    window.onload = function(){
-      var hideMe = document.getElementById('kk');
-      document.onclick = function(e){
-        if(e.target.id !== 'c-title-button' && e.target.id !== 'add-card-button' && e.target.id !== 'add-list-button'){
-            window.location = '/';
-              }
-            };
-    }; 
   }
 
   for (card of document.getElementsByClassName('card')) {
