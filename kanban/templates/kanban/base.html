@@ -20,7 +20,7 @@
  <h2>{{ board.name }}</h2>
 
  <!-- Top30 메인 리스트 / 별도 db 사용 / 수정 불가 -->
- <div class="board">
+  <div class="board">
     <div class="column">
         <h3>Top 30</h3>
         {% for card in tops %}
@@ -28,52 +28,55 @@
         {% endfor %}
     </div>
  
- <!-- 종목 정리용 리스트 / 생성, 삭제 가능 / 리스트는 메인리스트에서 가져옴 -->
-  {% for column in board.columns.all %}
-  <div class="column" data-column-id="{{ column.id }}">
-    <div class="c-title" style="float:left">
-   <form action="/new-col-name/" method="POST">
-    {% csrf_token %}
-    <input type="hidden" name="column_id" value="{{ column.id }}" />
-    <input type="text" name="title" class="new-col-name no-display" data-column-id="{{ column.id }}" />
-   </form>
-   <button class="column-title" data-column-id="{{ column.id }}">{{ column.title }}</button>
-    </div>
+    <!-- 종목 정리용 리스트 / 생성, 삭제 가능 / 리스트는 메인리스트에서 가져옴 -->
+    {% for column in board.columns.all %}
+    <div class="column" data-column-id="{{ column.id }}">
+      <div class="c-title" style="float:left">
+        <!-- 컬럼 타이틀 -->
+        <form action="/new-col-name/" method="POST">
+          {% csrf_token %}
+          <input id="c-title-hidden" type="hidden" name="column_id" value="{{ column.id }}" />
+          <input id ="c-title-text" type="text" name="title" class="new-col-name no-display" data-column-id="{{ column.id }}" />
+        </form>
+        <button id="c-title-button" class="column-title" data-column-id="{{ column.id }}">{{ column.title }}</button>
+      </div>
 
-   <!-- 컬럼 삭제 버튼  -->
-   <div class="c-delete" sytle="float:right">
-   <form action="/delete-column/" method="POST" >
-    {% csrf_token %}
-    <input type="hidden" name="column_id" value="{{ column.id }}" />
-    <button class="delete-button" type='submit' >delete</button>
-   </form>
-   </div>
+      <!-- 컬럼 삭제 버튼  -->
+      <div class="c-delete" sytle="float:right">
+        <form action="/delete-column/" method="POST" >
+          {% csrf_token %}
+          <input type="hidden" name="column_id" value="{{ column.id }}" />
+          <button class="delete-button" type='submit' >delete</button>
+        </form>
+      </div>
    
-   {% for card in column.cards.all %}
-   <a class="card" draggable="true" data-card-title="{{ card.title }}" href="/cards/{{ card.id }}/{{ card.slug }}/">{{ card.title }}</a>
-   {% endfor %}
+        {% for card in column.cards.all %}
+        <a class="card" draggable="true" data-card-title="{{ card.title }}" href="/cards/{{ card.id }}/{{ card.slug }}/">{{ card.title }}</a>
+        {% endfor %}
 
-   <form action="/new-card/" method="POST">
-    {% csrf_token %}
-    <input type="hidden" name="column_id" value="{{ column.id }}" />
-    <input type="text" name="title" class="new-card no-display" data-column-id="{{ column.id }}" />
-   </form>
-   <button class="show-new-card" data-column-id="{{ column.id }}">+ Add a card</button>
+        <form action="/new-card/" method="POST">
+          {% csrf_token %}
+          <input type="hidden" name="column_id" value="{{ column.id }}" />
+          <input type="text" name="title" class="new-card no-display" data-column-id="{{ column.id }}" />
+        </form>
+        <button id="add-card-button" class="show-new-card" data-column-id="{{ column.id }}">+ Add a card</button>
+      </div>
+      {% endfor %}
+
+    <form action="/new-list/" method="POST">
+      {% csrf_token %}
+      <input type="hidden" name="board_id" value="{{ board.id }}" />
+      <input type="text" name="title" class="new-list no-display" data-board-id="{{ board.id }}" />
+    </form>
+    <button id="add-list-button" class="show-new-list" data-board-id="{{ board.id }}">+ Add a new list</button>
   </div>
-  {% endfor %}
-  <form action="/new-list/" method="POST">
-    {% csrf_token %}
-    <input type="hidden" name="board_id" value="{{ board.id }}" />
-    <input type="text" name="title" class="new-list no-display" data-board-id="{{ board.id }}" />
-   </form>
-   <button class="show-new-list" data-board-id="{{ board.id }}">+ Add a new list</button>
- </div>
  
- {% empty %}
- <p><em>No boards created yet!</em></p>
- {% endfor %}
+  {% empty %}
+  <p><em>No boards created yet!</em></p>
+  {% endfor %}
 
  <script>
+   
   function parse_cookies() {
    var cookies = {};
    if (document.cookie && document.cookie !== '') {
@@ -87,20 +90,21 @@
    return cookies;
   }
   const cookies = parse_cookies();
-
+  
+  // 'ESC'버튼 눌렀을때 원래 페이지로 돌아가기
   for (doc of document.getElementsByClassName('board')) {
     doc.addEventListener('keyup', e => {
       if (e.keyCode === 27) { window.location = '/'
       }
     })
   }
+  
 
   for (button of document.getElementsByClassName('show-new-card')) {
-   button.addEventListener('click', e => {
-    const newCard = document.querySelector('.new-card[data-column-id="' + e.currentTarget.dataset.columnId + '"]');
-    newCard.classList.remove('no-display');
-    // e.currentTarget.classList.add('no-display');
-    newCard.focus();
+    button.addEventListener('click', e => {
+      const newCard = document.querySelector('.new-card[data-column-id="' + e.currentTarget.dataset.columnId + '"]');
+      newCard.classList.remove('no-display');
+      newCard.focus();
    })
   }
 
@@ -119,13 +123,21 @@
     const newColName = document.querySelector('.new-col-name[data-column-id="' + e.currentTarget.dataset.columnId + '"]');
     newColName.classList.remove('no-display');
     e.currentTarget.classList.add('no-display');
-    newColName.focus();
-   });
+    newColName.focus();        
+    });
+    window.onload = function(){
+      var hideMe = document.getElementById('kk');
+      document.onclick = function(e){
+        if(e.target.id !== 'c-title-button' && e.target.id !== 'add-card-button' && e.target.id !== 'add-list-button'){
+            window.location = '/';
+              }
+            };
+    }; 
   }
 
   for (card of document.getElementsByClassName('card')) {
    card.addEventListener('dragstart', e => {
-    e.dataTransfer.setData('Text', e.currentTarget.dataset.cardTitle); 
+    e.dataTransfer.setData('Text', e.currentTarget.dataset.cardTitle);
    });
   }
 
