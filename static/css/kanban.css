@@ -31,9 +31,15 @@ height : 100%;
 margin: 0 0 10px 0;
 }
 
+.c-title {
+    background-color :#E2E4E6;
+    width : 230px;
+}
+
 .column-title {
 border : none;
-background :none;
+background-color :#E2E4E6;
+
 height : 24px;
 font-size : 18px;
 margin : 0 0 10px 0;
@@ -132,3 +138,4 @@ background-color: #cdd2d4;
 /* text-decoration: underline; */
 border-radius : 2px;
 }
+
