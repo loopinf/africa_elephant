@@ -92,19 +92,19 @@
    }
    const cookies = parse_cookies();
 
-   // 입력창 취소 관련
+   // 입력창 취소 관련 focus된 아이템 저장
    var previousActiveElement=null;
 
    document.onmousedown = function(e) {
       previousActiveElement = document.activeElement;
-      
    }
   
+   // 외부 영역 클릭해서 취소하기
    document.onclick = function(e) {
       var targetElement = e.target;
       var currentActiveElement = document.activeElement;
 
-      if (currentActiveElement.dataset.columnId === undefined && previousActiveElement.dataset.columnId === undefined && currentActiveElement.className !== 'new-list' && previousActiveElement.className !== 'new-list') {return;}
+      if (currentActiveElement.dataset.columnId === undefined && previousActiveElement.dataset.columnId === undefined && currentActiveElement.className !== 'new-list' && previousActiveElement.className !== 'new-list' && previousActiveElement.className !== 'new-card-name') {return;}
       else if (previousActiveElement.className === 'new-card') {
          if (currentActiveElement.dataset.columnId === undefined || previousActiveElement.className !== currentActiveElement.className || currentActiveElement.dataset.columnId !== previousActiveElement.dataset.columnId) {
             previousActiveElement.classList.add('no-display')
@@ -123,9 +123,16 @@
             previousActiveElement.classList.add('no-display');
             document.getElementById('add-list-button').classList.remove('no-display');
          }
+      }
+      else if (previousActiveElement.className === "new-card-name") {
+         if (currentActiveElement.dataset.cardTitle === undefined || previousActiveElement.className !== currentActiveElement.className || currentActiveElement.dataset.cardTitle !== previousActiveElement.dataset.cardTitle) {
+            previousActiveElement.classList.add('no-display');
+            document.getElementById('card-title-button').classList.remove('no-display');
+         }
       }   
    }
 
+   // ESC키로 입력 취소
    document.onkeydown = function(e) {
       var activeElement = document.activeElement;
 
@@ -142,64 +149,76 @@
          activeElement.classList.add('no-display');
          document.getElementById('add-list-button').classList.remove('no-display');
       }
-
-      console.log(activeElement.className);
+      else if (activeElement.className === 'new-card-name') {
+         activeElement.classList.add('no-display');
+         document.getElementById('card-title-button').classList.remove('no-display');
+      }
+     
    }
 
-  function startDrag(e) {
-	var element = e.target;
-  
-  setTimeout(function(){
-  	element.classList.add('no-display');
-  });
-}
+   // 드래그 시작 시, 원래 카드 숨기기
+   function startDrag(e) {
+      var element = e.target;
+      setTimeout(function(){
+      element.classList.add('no-display');
+      });
+   }
 
-function endDrag(e) {
-  var element = e.srcElement;
-  
-  element.classList.remove('hide');
-}
+   function endDrag(e) {
+      var element = e.srcElement;
+      element.classList.remove('no-display');
+   }
 
 
-// 새 카드 만드는 버튼 액션 정의
-for (button of document.getElementsByClassName('show-new-card')) {
-   button.addEventListener('click', e => {
-      const newCard = document.querySelector('.new-card[data-column-id="' + e.currentTarget.dataset.columnId + '"]');
-      newCard.classList.remove('no-display');
-      newCard.focus();
-   });
-}
+   // 새 카드 만드는 버튼 액션 정의
+   for (button of document.getElementsByClassName('show-new-card')) {
+      button.addEventListener('click', e => {
+         const newCard = document.querySelector('.new-card[data-column-id="' + e.currentTarget.dataset.columnId + '"]');
+         newCard.classList.remove('no-display');
+         newCard.focus();
+      });
+   }
 
-// 새 리스트 만드는 버튼 액션 정의 
-for (button of document.getElementsByClassName('show-new-list')) {
-   button.addEventListener('click', e => {
-      const newList = document.querySelector('.new-list[data-board-id="' + e.currentTarget.dataset.boardId + '"]');
-      newList.classList.remove('no-display');
-      e.currentTarget.classList.add('no-display');
-      newList.focus();
-   });
-}
+   // 새 리스트 만드는 버튼 액션 정의 
+   for (button of document.getElementsByClassName('show-new-list')) {
+      button.addEventListener('click', e => {
+         const newList = document.querySelector('.new-list[data-board-id="' + e.currentTarget.dataset.boardId + '"]');
+         newList.classList.remove('no-display');
+         e.currentTarget.classList.add('no-display');
+         newList.focus();
+      });
+   }
 
-  // 리스트 이름 클릭에 관련된 액션
-for (button of document.getElementsByClassName('column-title')) {
-   button.addEventListener('mouseup', e => {
-      const newColName = document.querySelector('.new-col-name[data-column-id="' + e.currentTarget.dataset.columnId + '"]');
-      newColName.classList.remove('no-display');
-      e.currentTarget.classList.add('no-display');
-      newColName.focus();
-   });
-}
+   // 리스트 이름 클릭에 관련된 액션
+   for (button of document.getElementsByClassName('column-title')) {
+      button.addEventListener('mouseup', e => {
+         const newColName = document.querySelector('.new-col-name[data-column-id="' + e.currentTarget.dataset.columnId + '"]');
+         newColName.classList.remove('no-display');
+         e.currentTarget.classList.add('no-display');
+         newColName.focus();
+      });
+   }
 
-for (card of document.getElementsByClassName('card')) {
-   card.addEventListener('dragstart', e => {
-   e.dataTransfer.setData('Text', e.currentTarget.dataset.cardTitle);
-   });
-}
+   // 팝업창에서 카드 이름 변경하기 액션
+   for (button of document.getElementsByClassName('card-title')) {
+        button.addEventListener('click', e=> {
+            const newCardTitle= document.querySelector('.new-card-name[data-card-title="' + e.currentTarget.dataset.cardTitle + '"]');
+            newCardTitle.classList.remove('no-display');
+            e.currentTarget.classList.add('no-display');
+            newCardTitle.focus();
+        });
+    }
 
-  for (element of document.getElementsByClassName('column')) {
-    new Dragster(element);
-    element.addEventListener('dragover', e => {
-      if (e.preventDefault) e.preventDefault();
+   for (card of document.getElementsByClassName('card')) {
+      card.addEventListener('dragstart', e => {
+      e.dataTransfer.setData('Text', e.currentTarget.dataset.cardTitle);
+      });
+   }
+
+   for (element of document.getElementsByClassName('column')) {
+      new Dragster(element);
+      element.addEventListener('dragover', e => {
+         if (e.preventDefault) e.preventDefault();
       });
 
     element.addEventListener('dragster:enter', e => {
