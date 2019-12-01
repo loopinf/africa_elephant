@@ -33,8 +33,8 @@ def index(request):
 def new_card(request):
     column_id = int(request.POST.get('column_id'))
     title = request.POST.get('title')
-    if title == '':
-        return redirect('/')
+    # if title == '':
+    #     return redirect('/')
     assert title and column_id
     Card.objects.create(title=title, column_id=column_id)
     return redirect('/')
@@ -42,8 +42,8 @@ def new_card(request):
 def new_list(request):
     board_id = int(request.POST.get('board_id'))
     title = request.POST.get('title')
-    if title == '':
-        return redirect('/')
+    # if title == '':
+    #     return redirect('/')
     assert title and board_id
     Column.objects.create(title=title, board_id=board_id)
     return redirect('/')
@@ -51,8 +51,8 @@ def new_list(request):
 def new_col_name(request):
     column_id = int(request.POST.get('column_id'))
     title = request.POST.get('title')
-    if title == '':
-        return redirect('/')
+    # if title == '':
+    #     return redirect('/')
     assert title and column_id
     Column.objects.filter(id=column_id).update(title=title)
     return redirect('/')
@@ -72,6 +72,21 @@ def view_card(request, card_id, card_slug):
         'tops' : Card_top30.objects.all(),
         'current_card': Card.objects.get(id=card_id),
     })
+
+def new_card_name(request):
+    card_id = int(request.POST.get('current_card_id'))
+    new_card_title = request.POST.get('card_title')
+    print(card_id)
+    print(new_card_title)
+    assert card_id
+    Card.objects.filter(id=card_id).update(title=new_card_title)
+    return render(request, template_name='kanban/view.html', context={
+        'boards': Board.objects.all(),
+        'tops' : Card_top30.objects.all(),
+        'current_card': Card.objects.get(id=card_id),
+    })
+
+
 
 
 def drop(request):

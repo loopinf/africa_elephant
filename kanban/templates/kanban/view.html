@@ -50,13 +50,16 @@
         text-align : left;
         position : absolute;
         left : 10px;
+        width : 500px;
+        height : 25px;
 
     }
 
     .new-card-name {
         width : 500px;
         height : 25px;
-        font-size : 20px;
+        font-size : 18px;
+        font-weight : bold;
         position : absolute;
         left : 10px;
     }
@@ -76,8 +79,8 @@
    <div class="card-header">
         <form action="/new-card-name/" method="POST">
             {% csrf_token %}
-            <input id="card-title-hidden" type="hidden" name="current-card-title" value="{{current_card.title}}" />
-            <input id="card-title-text" type="text" name="card-title" class="new-card-name no-display" data-card-title="{{ current_card.title }}" />
+            <input id="card-title-hidden" type="hidden" name="current_card_id" value="{{current_card.id}}" />
+            <input id="card-title-text" type="text" name="card_title" class="new-card-name no-display" data-card-title="{{ current_card.title }}" value="{{ current_card.title }}"/>
         </form>
         <button id="card-title-button" class="card-title" data-card-title="{{ current_card.title }}" >{{ current_card.title }}</button>
 
@@ -86,4 +89,9 @@
    </div>
   </div>
  </div>
+ <script>
+ document.onclick = function(e) {
+     console.log(e.currentTarget.className)
+ }
+ </script>
 {% endblock %}

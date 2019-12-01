@@ -9,5 +9,6 @@ urlpatterns = [
     url(r'^cards/(?P<card_id>\d+)/(?P<card_slug>[\w-]+)/$', views.view_card),
     url(r'^drop/$', views.drop),
     url(r'^$', views.index),
-    url(r'^delete-column/$', views.delete_column)
+    url(r'^delete-column/$', views.delete_column),
+    url(r'^new-card-name/$', views.new_card_name),
 ]
