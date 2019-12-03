@@ -1,22 +1,16 @@
 {% load static %}
-
-
-
 <!doctype html>
 <html lang="en">
 <head>
-   <meta charset="utf-8">
-   <meta http-equiv="x-ua-compatible" content="ie=edge">
-   <meta name="description" content="">
-   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <title>AE Stocks</title>
-   <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-
-   <script src="//bensmithett.github.io/dragster/lib/dragster.js"></script>
-   <link rel="stylesheet" href="{% static 'css/kanban.css' %}">
-
+ <meta charset="utf-8">
+ <meta http-equiv="x-ua-compatible" content="ie=edge">
+ <meta name="description" content="">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>AE Stocks</title>
+ <script src="//bensmithett.github.io/dragster/lib/dragster.js"></script>
+ <script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js" ></script>
+ <script type="text/javascript" src="https://code.jquery.com/ui/1.12.1/jquery-ui.js" ></script>
+ <link rel="stylesheet" href="{% static 'css/kanban.css' %}">
 </head>
 
 <body>
@@ -28,31 +22,17 @@
  <h2>{{ board.name }}</h2>
 
  <!-- Top30 메인 리스트 / 별도 db 사용 / 수정 불가 -->
-  <div class="board1" >
-      <div class="column-top30">
-         <div class="top30-title">
-            <h3>Top 30 {{ date }} </h3>
-         </div>         
-         <div class="date-picker">
-            <form action="/" method="POST">
-               {% csrf_token %}
-               <input type="text" id="datepicker" name="date">
-               <button type="submit">update</button>
-            </form>
-            <br>
-         </div>        
-         
-         {% for card in tops %}
-         <a class="card" draggable="true" data-card-title="{{ card.title }}">{{ card.title }} {{ card.rate }} {{ card.market }} </a>
-         {% endfor %}
-
-                       
-         
-      </div>
+  <div class="board" >
+    <div class="column" data-column-id="top30">
+        <h3>Top 30</h3>
+        {% for card in tops %}
+        <a class="card" draggable="true" data-card-title="{{ card.title }}">{{ card.title }} {{ card.rate }} {{ card.market }} </a>
+        {% endfor %}
+    </div>
  
     <!-- 종목 정리용 리스트 / 생성, 삭제 가능 / 리스트는 메인리스트에서 가져옴 -->
     {% for column in board.columns.all %}
-    <div class="column" data-column-id="{{ column.id }}" draggable="true">
+    <div class="column" data-column-id="{{ column.id }}" draggable="true" id="column-sortable">
       <div class="c-title" style="float:left">
         <!-- 컬럼 타이틀 -->
         <form action="/new-col-name/" method="POST">
@@ -60,7 +40,7 @@
           <input id="c-title-hidden" type="hidden" name="column_id" value="{{ column.id }}" />
           <input id ="c-title-text" type="text" name="title" class="new-col-name no-display" data-column-id="{{ column.id }}" data-column-title="{{ column.title }}" value="{{ column.title }}"/>
         </form>
-        <button id="c-title-button" class="column-title" data-column-id="{{ column.id }}">{{ column.title }}</button>
+        <button id="c-title-button" class="column-title" data-column-id="{{ column.id }}">{{ column.title }} {{ column.id }}</button>
       </div>
 
       <!-- 컬럼 삭제 버튼  -->
@@ -94,35 +74,11 @@
     <button id="add-list-button" class="show-new-list" data-board-id="{{ board.id }}">+ Add a new list</button>
   </div>
  
-  
   {% empty %}
   <p><em>No boards created yet!</em></p>
   {% endfor %}
 
 <script>
-
-$("#datepicker").datepicker({
-               dateFormat: 'yy-mm-dd' //Input Display Format 변경
-                ,showOtherMonths: true //빈 공간에 현재월의 앞뒤월의 날짜를 표시
-                ,showMonthAfterYear:true //년도 먼저 나오고, 뒤에 월 표시
-                ,changeYear: true //콤보박스에서 년 선택 가능
-                ,changeMonth: true //콤보박스에서 월 선택 가능                
-                ,showOn: "both" //button:버튼을 표시하고,버튼을 눌러야만 달력 표시 ^ both:버튼을 표시하고,버튼을 누르거나 input을 클릭하면 달력 표시  
-                ,buttonImage: "http://jqueryui.com/resources/demos/datepicker/images/calendar.gif" //버튼 이미지 경로
-                ,buttonImageOnly: true //기본 버튼의 회색 부분을 없애고, 이미지만 보이게 함
-                ,buttonText: "선택" //버튼에 마우스 갖다 댔을 때 표시되는 텍스트                
-                ,yearSuffix: "년" //달력의 년도 부분 뒤에 붙는 텍스트
-                ,monthNamesShort: ['1','2','3','4','5','6','7','8','9','10','11','12'] //달력의 월 부분 텍스트
-                ,monthNames: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'] //달력의 월 부분 Tooltip 텍스트
-                ,dayNamesMin: ['일','월','화','수','목','금','토'] //달력의 요일 부분 텍스트
-                ,dayNames: ['일요일','월요일','화요일','수요일','목요일','금요일','토요일'] //달력의 요일 부분 Tooltip 텍스트
-                ,minDate: "-1M" //최소 선택일자(-1D:하루전, -1M:한달전, -1Y:일년전)
-                ,maxDate: "+1M" //최대 선택일자(+1D:하루후, -1M:한달후, -1Y:일년후)                
-            });                    
-            
-            //초기값을 오늘 날짜로 설정
-   $('#datepicker').datepicker('setDate', 'today'); //(-1D:하루전, -1M:한달전, -1Y:일년전), (+1D:하루후, -1M:한달후, -1Y:일년후)    
-    
    
    function parse_cookies() {
       var cookies = {};
@@ -142,7 +98,7 @@ $("#datepicker").datepicker({
    var previousActiveElement=null;
 
    document.onmousedown = function(e) {
-      console.log('0' + 'button down');
+      console.log('0' + e.target.dataset.columnId);
       previousActiveElement = document.activeElement;
    }
   
@@ -197,7 +153,6 @@ $("#datepicker").datepicker({
          columnTitle.classList.remove('no-display');
       }
       else if (activeElement.className === 'new-col-name' && e.keyCode === 13) {
-         console.log('3' + activeElement.value);
          if (activeElement.value ==='' || activeElement.value === e.target.dataset.columnTitle) {
             e.preventDefault();
             activeElement.classList.add('no-display');
@@ -242,7 +197,7 @@ $("#datepicker").datepicker({
    // 드래그 시작 시, 원래 카드 숨기기 - 사용하지 않는 코드. 참고용
    function startDrag(e) {
       var element = e.target;
-      console.log('4' + e.target.classList);
+      console.log('4' + e.srcElement);
       setTimeout(function(){
          element.classList.add('moving-card');
       }, 0);
@@ -308,12 +263,12 @@ $("#datepicker").datepicker({
       new Dragster(element);
       element.addEventListener('dragover', e => {
          if (e.target.dataset.columnId === null) {console.log('5' + 'board!!')};
-         console.log('6' + e.target.classList);
+         console.log('6' + e.srcElement.dataset.columnId);
          if (e.preventDefault) e.preventDefault();
       });
 
     element.addEventListener('dragster:enter', e => {
-      e.currentTarget.classList.add('dropme'); 
+      e.currentTarget.classList.add('dropme');
       });
 
     element.addEventListener('dragster:leave', e => {

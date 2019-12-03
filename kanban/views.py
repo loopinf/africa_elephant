@@ -3,6 +3,7 @@ import json
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.views.decorators.csrf import ensure_csrf_cookie
+from .forms import ToDoForm
 
 from .models import Board, Card, Column, Card_top30
 from . import getdata
@@ -16,6 +17,12 @@ def index(request):
     input_date = '2019-11-22'
     df = getdata.getdata(input_date)
     Card_top30.objects.all().delete()
+    
+    date1 = request.POST.get('date')
+
+    if date1 == None:
+        date1 = input_date
+        
 
     for i in range(0, len(df.index)):
         date = df.iloc[i, 0]
@@ -27,6 +34,8 @@ def index(request):
     return render(request, template_name='kanban/base.html', context={
         'boards': Board.objects.all(),
         'tops' : Card_top30.objects.all(),
+        'form' : ToDoForm(),
+        'date' : date1,
     })
 
 

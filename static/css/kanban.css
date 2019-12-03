@@ -12,9 +12,9 @@ color: white;
 background-color: rgb(0, 121, 191);
 }
 
-.board {
+.board1 {
 display: flex;
-width :3000px
+width :3000px;
 }
 
 .column {
@@ -26,6 +26,16 @@ padding: 10px;
 margin-right: 10px;
 height : 100%;
 }
+
+.column-top30 {
+    color: #4d4d4d;
+    width: 400px;
+    background-color: #E2E4E6;
+    border-radius: 3px;
+    padding: 10px;
+    margin-right: 10px;
+    height : 100%;
+    }
 
 .column > h3 {
 margin: 0 0 10px 0;
@@ -147,4 +157,23 @@ background-color: #cdd2d4;
 border-radius : 2px;
 }
 
+.date-picker {
+    /* background-color: steelblue; */
+    width : 30%;
+    font-size : 0px;
+    /* display : inline; */
+    display : inline-block;
+   
+}
+.top30-title {
+    display : inline-block;
+}
+
+/* .block {
+    width : 50%;
+} */
+
+.inline {
+    display : inline;
+}
 
