@@ -159,7 +159,7 @@ border-radius : 2px;
 
 .date-picker {
     /* background-color: steelblue; */
-    width : 30%;
+    width : 70%;
     font-size : 0px;
     /* display : inline; */
     display : inline-block;
@@ -169,11 +169,19 @@ border-radius : 2px;
     display : inline-block;
 }
 
-/* .block {
-    width : 50%;
-} */
-
-.inline {
-    display : inline;
+.block {
+    display : inline-block;
 }
 
+.date-button {
+    margin-left : 10px;
+    float : right;
+}
+
+.date {
+    border : none;
+    background-color: #E2E4E6;
+    margin-left: 20px;
+    font-size : 15px;
+    width : 100px;
+}
