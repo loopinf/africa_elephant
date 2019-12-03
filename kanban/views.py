@@ -3,7 +3,6 @@ import json
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.views.decorators.csrf import ensure_csrf_cookie
-from .forms import ToDoForm
 
 from .models import Board, Card, Column, Card_top30
 from . import getdata
@@ -34,7 +33,6 @@ def index(request):
     return render(request, template_name='kanban/base.html', context={
         'boards': Board.objects.all(),
         'tops' : Card_top30.objects.all(),
-        'form' : ToDoForm(),
         'date' : date1,
     })
 

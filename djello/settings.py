@@ -43,8 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'jquery',
-    'bootstrap4',
-    'bootstrap_datepicker_plus',
+    
 
 ]
 
@@ -139,6 +138,4 @@ STATICFILES_DIRS = (
 # STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-BOOTSTRAP4 = {
-    'include-jquery' : True,
-}
+
