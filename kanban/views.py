@@ -26,9 +26,11 @@ def index(request):
     for i in range(0, len(df.index)):
         date = df.iloc[i, 0]
         title = df.iloc[i,1]
-        rate = df.iloc[i,2]
+        drate = df.iloc[i,2]
         market = df.iloc[i,3]
-        Card_top30.objects.create(title=title, rate=rate, market=market)
+        mrate = df.iloc[i,4]
+        capital = df.iloc[i,5]
+        Card_top30.objects.create(title=title, drate=drate, market=market, mrate=mrate, capital=capital)
     
     return render(request, template_name='kanban/base.html', context={
         'boards': Board.objects.all(),

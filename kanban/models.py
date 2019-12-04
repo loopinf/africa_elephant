@@ -51,13 +51,15 @@ class Card(models.Model):
 class Card_top30(models.Model):
     # column = models.ForeignKey('Board', related_name='cards_top30', on_delete=models.CASCADE)
     title = models.CharField(max_length=255)
-    rate = models.FloatField()
+    drate = models.FloatField()
     market = models.CharField(max_length=255)
+    mrate = models.FloatField()
+    capital = models.FloatField()
 
     slug = models.SlugField(allow_unicode=True)
 
     class Meta:
-        ordering = ['-rate']
+        ordering = ['-drate']
 
     def __str__(self):
         return '{} - {} - {}'.format(self.column.board.name, self.column.title, self.title)

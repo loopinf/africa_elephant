@@ -1,7 +1,4 @@
 {% load static %}
-
-
-
 <!doctype html>
 <html lang="en">
 <head>
@@ -11,124 +8,127 @@
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
    <title>AE Stocks</title>
    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+   <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+   <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 
    <script src="//bensmithett.github.io/dragster/lib/dragster.js"></script>
    <link rel="stylesheet" href="{% static 'css/kanban.css' %}">
-
 </head>
 
 <body>
- {% block content %}{% endblock %}
+   {% block content %}{% endblock %}
 
- <h1>아프리카 코끼리</h1>
+   <h1>아프리카 코끼리</h1>
 
- {% for board in boards %} 
- <h2>{{ board.name }}</h2>
+   {% for board in boards %} 
+   <h2>{{ board.name }}</h2>
 
- <!-- Top30 메인 리스트 / 별도 db 사용 / 수정 불가 -->
-  <div class="board1" >
+   <!-- Top30 메인 리스트 / 별도 db 사용 / 수정 불가 -->
+   <div class="board1" >
       <div class="column-top30">
          <div class="top30-title">
-            <h3>Top 30</h3>
+            <h3>TOP 30</h3>
          </div>         
-         <div class="date-picker">
+         <span class="date-picker">
             <form action="/" method="POST">
                {% csrf_token %}
-               <div class="block"><input type="text" id="datepicker" name="date" class='input-group date' value="{{ date }}"/></div>
-               <div class="block"><button type="submit" class="date-button">update</button></div>
-            </form>
-            
-         </div>        
+               <input type="text" id="datepicker" name="date" class='input-group date' value="{{ date }}"/>
+               <button type="submit" class="date-button">update</button>
+            </form>  
+         </span>        
          
          {% for card in tops %}
-         <a class="card" draggable="true" data-card-title="{{ card.title }}">{{ card.title }} {{ card.rate }} {{ card.market }} </a>
-         {% endfor %}
-
-                       
-         
+         <div class="card-top30" >
+            <span class="top30-item" draggable="true" data-card-title="{{ card.title }}" >
+               <div class="top30-item-market">{{ card.market}}</div>
+               <div class="top30-item-item" >{{ card.title }}</div>
+            </span>
+            <span class="top30-info">
+               <img src="{% static "kanban/red_bar.png"%}" alt="My image" border=0 height="10px" width="{{ card.drate }}" class="top30-info-image"/>
+               <span class="top30-info-drate">{{ card.drate }}%</span>
+               <span class="top30-info-mrate">{{ card.mrate }}%</span>
+               <span class="top30-info-capital">{{ card.capital }}억원</span>
+            </span>   
+         </div>         
+         {% endfor %}  
       </div>
  
-    <!-- 종목 정리용 리스트 / 생성, 삭제 가능 / 리스트는 메인리스트에서 가져옴 -->
-    {% for column in board.columns.all %}
-    <div class="column" data-column-id="{{ column.id }}" draggable="true">
-      <div class="c-title" style="float:left">
-        <!-- 컬럼 타이틀 -->
-        <form action="/new-col-name/" method="POST">
-          {% csrf_token %}
-          <input id="c-title-hidden" type="hidden" name="column_id" value="{{ column.id }}" />
-          <input id ="c-title-text" type="text" name="title" class="new-col-name no-display" data-column-id="{{ column.id }}" data-column-title="{{ column.title }}" value="{{ column.title }}"/>
-        </form>
-        <button id="c-title-button" class="column-title" data-column-id="{{ column.id }}">{{ column.title }}</button>
-      </div>
+      <!-- 종목 정리용 리스트 / 생성, 삭제 가능 / 리스트는 메인리스트에서 가져옴 -->
+      {% for column in board.columns.all %}
+      <div class="column" data-column-id="{{ column.id }}" draggable="true">
+         <div class="c-title" style="float:left">
+            <!-- 컬럼 타이틀 -->
+            <form action="/new-col-name/" method="POST">
+               {% csrf_token %}
+               <input id="c-title-hidden" type="hidden" name="column_id" value="{{ column.id }}" />
+               <input id ="c-title-text" type="text" name="title" class="new-col-name no-display" data-column-id="{{ column.id }}" data-column-title="{{ column.title }}" value="{{ column.title }}"/>
+            </form>
+            <button id="c-title-button" class="column-title" data-column-id="{{ column.id }}">{{ column.title }}</button>
+         </div>
 
-      <!-- 컬럼 삭제 버튼  -->
-      <div class="c-delete" sytle="float:right">
-        <form action="/delete-column/" method="POST" >
-          {% csrf_token %}
-          <input type="hidden" name="column_id" value="{{ column.id }}" />
-          <button class="delete-button" type='submit'>delete</button>
-        </form>
-      </div>
+         <!-- 컬럼 삭제 버튼  -->
+         <div class="c-delete" sytle="float:right">
+            <form action="/delete-column/" method="POST" >
+               {% csrf_token %}
+               <input type="hidden" name="column_id" value="{{ column.id }}" />
+               <button class="delete-button" type='submit'>delete</button>
+            </form>
+         </div>
         
-        {% for card in column.cards.all %}
-        <a class="card" draggable="true" id="list-1" data-card-title="{{ card.title }}" href="/cards/{{ card.id }}/{{ card.slug }}/" >{{ card.title }}</a>  <!-- ondragstart="startDrag(event)" ondragend="endDrag(event)" -->
-        {% endfor %}
+         {% for card in column.cards.all %}
+         <a class="card" draggable="true" id="list-1" data-card-title="{{ card.title }}" href="/cards/{{ card.id }}/{{ card.slug }}/" >{{ card.title }}</a>  <!-- ondragstart="startDrag(event)" ondragend="endDrag(event)" -->
+         {% endfor %}
       
 
-        <form action="/new-card/" method="POST">
-          {% csrf_token %}
-          <input type="hidden" name="column_id" value="{{ column.id }}" />
-          <input id ="new-card-text" type="text" name="title" class="new-card no-display" data-column-id="{{ column.id }}" />
-        </form>
-        <button id="add-card-button" class="show-new-card" data-column-id="{{ column.id }}">+ Add a card</button>
+         <form action="/new-card/" method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="column_id" value="{{ column.id }}" />
+            <input id ="new-card-text" type="text" name="title" class="new-card no-display" data-column-id="{{ column.id }}" />
+         </form>
+         <button id="add-card-button" class="show-new-card" data-column-id="{{ column.id }}">+ Add a card</button>
       </div>
       {% endfor %}
-    <!-- 새 컬럼 추가 버튼 -->
-    <form action="/new-list/" method="POST">
-      {% csrf_token %}
-      <input type="hidden" name="board_id" value="{{ board.id }}" />
-      <input id="add-list-text" type="text" name="title" class="new-list no-display" data-board-id="{{ board.id }}" />
-    </form>
-    <button id="add-list-button" class="show-new-list" data-board-id="{{ board.id }}">+ Add a new list</button>
-  </div>
+      <!-- 새 컬럼 추가 버튼 -->
+      <form action="/new-list/" method="POST">
+         {% csrf_token %}
+         <input type="hidden" name="board_id" value="{{ board.id }}" />
+         <input id="add-list-text" type="text" name="title" class="new-list no-display" data-board-id="{{ board.id }}" />
+      </form>
+      <button id="add-list-button" class="show-new-list" data-board-id="{{ board.id }}">+ Add a new list</button>
+   </div>
  
   
-  {% empty %}
-  <p><em>No boards created yet!</em></p>
-  {% endfor %}
+   {% empty %}
+   <p><em>No boards created yet!</em></p>
+   {% endfor %}
 
-<script>
+   <script>
+      
+      var date = new Date();
+      date.setDate(date.getDate());
 
-var date = new Date();
-    date.setDate(date.getDate());
-
-$("#datepicker").datepicker({
-               dateFormat: 'yy-mm-dd' //Input Display Format 변경
-                ,showOtherMonths: true //빈 공간에 현재월의 앞뒤월의 날짜를 표시
-                ,showMonthAfterYear:true //년도 먼저 나오고, 뒤에 월 표시
-               //  ,changeYear: true //콤보박스에서 년 선택 가능
-               //  ,changeMonth: true //콤보박스에서 월 선택 가능                
-                ,showOn: "both" //button:버튼을 표시하고,버튼을 눌러야만 달력 표시 ^ both:버튼을 표시하고,버튼을 누르거나 input을 클릭하면 달력 표시  
-                ,buttonImage: "http://jqueryui.com/resources/demos/datepicker/images/calendar.gif" //버튼 이미지 경로
-                ,buttonImageOnly: true //기본 버튼의 회색 부분을 없애고, 이미지만 보이게 함
-                ,buttonText: "선택" //버튼에 마우스 갖다 댔을 때 표시되는 텍스트                
-                ,yearSuffix: "년" //달력의 년도 부분 뒤에 붙는 텍스트
-                ,monthNamesShort: ['1','2','3','4','5','6','7','8','9','10','11','12'] //달력의 월 부분 텍스트
-                ,monthNames: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'] //달력의 월 부분 Tooltip 텍스트
-                ,dayNamesMin: ['일','월','화','수','목','금','토'] //달력의 요일 부분 텍스트
-                ,dayNames: ['일요일','월요일','화요일','수요일','목요일','금요일','토요일'] //달력의 요일 부분 Tooltip 텍스트
-                ,minDate: "-3M" //최소 선택일자(-1D:하루전, -1M:한달전, -1Y:일년전)
-                ,maxDate: "+3M" //최대 선택일자(+1D:하루후, -1M:한달후, -1Y:일년후) 
-                ,defaultDate: date,
+      $("#datepicker").datepicker({
+         dateFormat: 'yy-mm-dd' //Input Display Format 변경
+         ,showOtherMonths: true //빈 공간에 현재월의 앞뒤월의 날짜를 표시
+         ,showMonthAfterYear:true //년도 먼저 나오고, 뒤에 월 표시
+         //  ,changeYear: true //콤보박스에서 년 선택 가능
+         //  ,changeMonth: true //콤보박스에서 월 선택 가능                
+         ,showOn: "both" //button:버튼을 표시하고,버튼을 눌러야만 달력 표시 ^ both:버튼을 표시하고,버튼을 누르거나 input을 클릭하면 달력 표시  
+         ,buttonImage: "http://jqueryui.com/resources/demos/datepicker/images/calendar.gif" //버튼 이미지 경로
+         ,buttonImageOnly: true //기본 버튼의 회색 부분을 없애고, 이미지만 보이게 함
+         ,buttonText: "선택" //버튼에 마우스 갖다 댔을 때 표시되는 텍스트                
+         ,yearSuffix: "년" //달력의 년도 부분 뒤에 붙는 텍스트
+         ,monthNamesShort: ['1','2','3','4','5','6','7','8','9','10','11','12'] //달력의 월 부분 텍스트
+         ,monthNames: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'] //달력의 월 부분 Tooltip 텍스트
+         ,dayNamesMin: ['일','월','화','수','목','금','토'] //달력의 요일 부분 텍스트
+         ,dayNames: ['일요일','월요일','화요일','수요일','목요일','금요일','토요일'] //달력의 요일 부분 Tooltip 텍스트
+         ,minDate: "-3M" //최소 선택일자(-1D:하루전, -1M:한달전, -1Y:일년전)
+         ,maxDate: "+3M" //최대 선택일자(+1D:하루후, -1M:한달후, -1Y:일년후) 
+         ,defaultDate: date,
          onSelect: function () {
             selectedDate = $.datepicker.formatDate("yy-mm-dd", $(this).datepicker('getDate'));
-        }               
-            });                    
-            
-            //초기값을 오늘 날짜로 설정
-   // $('#datepicker').datepicker("setDate",selectedDate); //(-1D:하루전, -1M:한달전, -1Y:일년전), (+1D:하루후, -1M:한달후, -1Y:일년후)    
+         }               
+      });     
     
    
    function parse_cookies() {
@@ -307,6 +307,12 @@ $("#datepicker").datepicker({
 
    for (card of document.getElementsByClassName('card')) {
       card.addEventListener('dragstart', e => {
+         e.dataTransfer.setData('Text', e.currentTarget.dataset.cardTitle);
+      });
+   }
+
+   for (card2 of document.getElementsByClassName('top30-item-item')) {
+      card2.addEventListener('dragstart', e => {
          e.dataTransfer.setData('Text', e.currentTarget.dataset.cardTitle);
       });
    }

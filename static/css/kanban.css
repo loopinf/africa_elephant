@@ -27,16 +27,6 @@ margin-right: 10px;
 height : 100%;
 }
 
-.column-top30 {
-    color: #4d4d4d;
-    width: 400px;
-    background-color: #E2E4E6;
-    border-radius: 3px;
-    padding: 10px;
-    margin-right: 10px;
-    height : 100%;
-    }
-
 .column > h3 {
 margin: 0 0 10px 0;
 }
@@ -82,7 +72,105 @@ color: inherit;
 text-decoration: inherit;
 font-size : 12px;
 box-shadow: 0px 1px 1px 0px gray;
+
 }
+
+.column-top30 {
+    color: #4d4d4d;
+    width: 420px;
+    background-color: #E2E4E6;
+    border-radius: 3px;
+    padding: 0px 0px 10px 8px;
+    margin-right: 10px;
+    height : 100%;
+}
+
+.column-top30 >h3 {
+    margin: 0 0 10px 0;
+}
+
+.top30-title {
+    display : inline-block;
+    margin-top : 0px;
+    height : 80%;
+}
+
+.card-top30 {
+    display: block;
+    height : 105%;
+    padding: 1px;
+    margin-bottom: 2px;
+}
+
+.top30-item {
+    display: inline-block;
+    width : 35%;
+    height : 105%;
+    border-radius: 3px;
+    background-color: white;
+    padding: 0px 4px 2px 4px;
+    margin-right: 4px;
+    box-shadow: 0px 1px 1px 0px gray;   
+}
+
+.top30-item:hover {
+    color: #4d4d4d;
+    background-color: #cdd2d4;
+    /* text-decoration: underline; */
+    border-radius : 2px;
+}
+
+.top30-item-item {
+    font-size : 15px;
+    font-weight: bolder;
+}
+
+.top30-item-market {
+    display: inline-block;
+    font-size : 8px;
+    color : white;
+    background-color: #534f4f;
+    padding : 0px 1.5px 0.5px 1.5px;
+    text-align : center;
+    border-radius : 2px;
+    font-weight : bold;
+    margin-bottom: 0px;
+}
+
+.top30-info {
+    position: relative;
+    display: inline-block;
+    width :58%;
+    background-color: whitesmoke;
+    height : 130%;
+    border-radius: 3px;
+    padding: 4px;
+    box-shadow: 0px 1px 1px 0px gray;
+}
+
+.top30-info-image {
+    margin-bottom: 2.5px;
+}
+
+.top30-info-drate {
+    position : absolute; right : 69%;
+    font-size : 12px;
+    font-weight: bold;
+}
+
+.top30-info-mrate {
+    position : absolute; right : 45%;
+    font-size : 13px;
+    font-weight: bold;
+}
+
+.top30-info-capital {
+    position : absolute; right : 10px;
+    font-size : 13px;
+    font-weight: bold;    
+}
+
+
 
 .new-card {
 border: none;
@@ -165,9 +253,7 @@ border-radius : 2px;
     display : inline-block;
    
 }
-.top30-title {
-    display : inline-block;
-}
+
 
 .block {
     display : inline-block;
