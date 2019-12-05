@@ -27,8 +27,7 @@ SECRET_KEY = '=y(c!*#^=m3y9v4$qmg=j4l-i3&@e*-l7l*-b&68^)^253r&i2'
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    'commoncode-djello.herokuapp.com',
-    '127.0.0.1',
+    'localhost', '127.0.0.1', '[::1]', '.pythonanywhere.com',
 ]
 
 
